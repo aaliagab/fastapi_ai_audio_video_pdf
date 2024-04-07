@@ -1,0 +1,6 @@
+# Ignorar el directorio aienv
+aienv/
+
+# Ignorar el directorio data
+data/
+
