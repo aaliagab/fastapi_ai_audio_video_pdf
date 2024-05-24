@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.user import User
+import hashlib
 
 class UserDAO:
     @staticmethod
@@ -11,7 +12,13 @@ class UserDAO:
         return db.query(User).filter(User.id == user_id).first()
     
     @staticmethod
+    def get_user_by_username(db: Session, user_name: str):
+        return db.query(User).filter(User.user_name == user_name).first()
+
+    
+    @staticmethod
     def create_user(db: Session, user: User):
+        user.user_password = hashlib.md5(user.user_password.encode()).hexdigest()
         db.add(user)
         db.commit()
         db.refresh(user)
@@ -22,7 +29,10 @@ class UserDAO:
         user = db.query(User).filter(User.id == user_id).first()
         if user:
             for key, value in user_data.items():
-                setattr(user, key, value)
+                if key == "user_password":
+                    value = hashlib.md5(value.encode()).hexdigest()
+                if key != "user_name":    
+                    setattr(user, key, value)
             db.commit()
             db.refresh(user)
         return user

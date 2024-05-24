@@ -5,10 +5,12 @@ from models.access import Access as SQLAlchemyAccess
 from dto.access_dto import Access, AccessCreate, AccessUpdate
 from configurations.config import get_db
 from typing import List
+from dependencies import has_admin_access
 
 router = APIRouter()
 
-@router.get("/", response_model=List[Access])
+
+@router.get("/", response_model=List[Access], dependencies=[Depends(has_admin_access)])
 def read_accesses(db: Session = Depends(get_db)):
     return AccessDAO.get_all_accesses(db)
 

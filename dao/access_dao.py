@@ -11,6 +11,10 @@ class AccessDAO:
         return db.query(Access).filter(Access.accesstoken_id == access_id).first()
     
     @staticmethod
+    def get_access_by_name(db: Session, access_name: str):
+        return db.query(Access).filter(Access.access_name == access_name).first()
+    
+    @staticmethod
     def create_access(db: Session, access: Access):
         db.add(access)
         db.commit()

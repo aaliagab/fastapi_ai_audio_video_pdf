@@ -8,6 +8,10 @@ from routes.source_routes import router as router_source
 from routes.content_routes import router as router_content
 from routes.access_routes import router as router_access
 from routes.user_access_routes import router as router_user_access
+from routes.auth_routes import router_auth
+from middleware import AuthMiddleware
+from utils import ensure_admin_access, ensure_admin_user
+from configurations.config import engine, Base, SessionLocal
 
 import uvicorn
 
@@ -40,8 +44,18 @@ app.include_router(router_content, prefix="/contents", tags=["contents"])
 app.include_router(router_access, prefix="/accesses", tags=["accesses"])
 app.include_router(router_user_access, prefix="/user_accesses", tags=["user_accesses"])
 
+# Include authentication routes
+app.include_router(router_auth, prefix="/auth", tags=["auth"])
+
+# Add authentication middleware
+app.add_middleware(AuthMiddleware)
+
 # Create database tables (optional, use migrations in production)
-#Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
+
+with SessionLocal() as db:
+    ensure_admin_access(db)
+    ensure_admin_user(db)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
