@@ -4,6 +4,9 @@ from fastapi import Request, HTTPException
 
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
+        if request.url.path == "/docs" or request.url.path == "/openapi.json" or request.url.path == "/auth/authenticate":
+            response = await call_next(request)
+            return response
         access_token = request.headers.get("Authorization")
         if not access_token:
             raise HTTPException(status_code=401, detail="Missing access token")
