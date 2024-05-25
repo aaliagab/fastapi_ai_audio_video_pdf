@@ -10,11 +10,11 @@ from utils import get_auth
 router = APIRouter()
 
 @router.get("/", response_model=List[Source])
-def read_sources(db: Session = Depends(get_db)):
+def read_sources(request: Request, db: Session = Depends(get_db), auth: dict = Depends(get_auth)):
     return SourceDAO.get_all_sources(db)
 
 @router.get("/{source_id}", response_model=Source)
-def read_source(source_id: str, db: Session = Depends(get_db)):
+def read_source(source_id: str, db: Session = Depends(get_db), auth: dict = Depends(get_auth)):
     source = SourceDAO.get_source_by_id(db, source_id)
     if source is None:
         raise HTTPException(status_code=404, detail="Source not found")

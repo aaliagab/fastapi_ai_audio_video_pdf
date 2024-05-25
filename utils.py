@@ -27,21 +27,12 @@ def ensure_admin_user(db: Session):
         user_access = UserAccess(user_id=admin_user.id, accesstoken_id=admin_access.accesstoken_id)
         UserAccessDAO.create_user_access(db, user_access)
 
-def get_access_tokens(request: Request):
-    return request.state.access_tokens
-
-def has_access(request: Request):
-    access_tokens = getattr(request.state, 'access_tokens', None)
-    if not access_tokens:
-        raise HTTPException(status_code=403, detail="No access tokens found")
-    return access_tokens
-
 def get_auth(api_key: str = Depends(api_key_header)):
     import json
     if not api_key:
         raise HTTPException(status_code=403, detail="No Authorization header found")
     try:
         auth = json.loads(api_key)
+        return auth
     except json.JSONDecodeError:
         raise HTTPException(status_code=403, detail="Invalid Authorization header format")
-    return auth

@@ -20,4 +20,7 @@ class SourceInDBBase(SourceBase):
         orm_mode = True
 
 class Source(SourceInDBBase):
+    class Config:
+        orm_mode = True
+        from_attributes = True
     pass

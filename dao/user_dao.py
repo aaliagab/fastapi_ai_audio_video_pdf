@@ -15,7 +15,6 @@ class UserDAO:
     def get_user_by_username(db: Session, user_name: str):
         return db.query(User).filter(User.user_name == user_name).first()
 
-    
     @staticmethod
     def create_user(db: Session, user: User):
         user.user_password = hashlib.md5(user.user_password.encode()).hexdigest()
@@ -31,8 +30,7 @@ class UserDAO:
             for key, value in user_data.items():
                 if key == "user_password":
                     value = hashlib.md5(value.encode()).hexdigest()
-                if key != "user_name":    
-                    setattr(user, key, value)
+                setattr(user, key, value)
             db.commit()
             db.refresh(user)
         return user
