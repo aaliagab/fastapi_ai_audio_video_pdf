@@ -18,6 +18,16 @@ class UserAccessDAO:
         return user_access
     
     @staticmethod
+    def update_user_access(db: Session, user_id: str, access_id: str, user_access_data: dict):
+        user_access = db.query(UserAccess).filter(UserAccess.user_id == user_id, UserAccess.accesstoken_id == access_id).first()
+        if user_access:
+            for key, value in user_access_data.items():
+                setattr(user_access, key, value)
+            db.commit()
+            db.refresh(user_access)
+        return user_access
+    
+    @staticmethod
     def delete_user_access(db: Session, user_id: str, access_id: str):
         user_access = db.query(UserAccess).filter(UserAccess.user_id == user_id, UserAccess.accesstoken_id == access_id).first()
         if user_access:

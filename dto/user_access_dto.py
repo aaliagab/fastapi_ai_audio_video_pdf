@@ -7,8 +7,9 @@ class UserAccessBase(BaseModel):
 class UserAccessCreate(UserAccessBase):
     pass
 
-class UserAccessUpdate(UserAccessBase):
-    pass
+class UserAccessUpdate(BaseModel):
+    user_id: str = None
+    accesstoken_id: str = None
 
 class UserAccessInDBBase(UserAccessBase):
     class Config:
