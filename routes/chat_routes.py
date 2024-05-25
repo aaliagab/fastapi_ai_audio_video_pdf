@@ -5,8 +5,9 @@ from llama_index.core import Settings
 from llama_index.llms.openai import OpenAI
 #from langchain.chat_models import ChatOpenAI
 import textwrap
-from fastapi import APIRouter, File, UploadFile
+from fastapi import APIRouter, File, UploadFile, Depends
 from fastapi.responses import JSONResponse
+from utils import get_auth
 
 #Cámbiala por tu API de OpenAI
 os.environ["OPENAI_API_KEY"] = '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'
@@ -19,7 +20,7 @@ Settings.chunk_size = 512
 router_chat = APIRouter()
 
 @router_chat.post('/chat/query-question-from-chatgpt')
-def query_question_from_chatgpt(question: str):   
+def query_question_from_chatgpt(question: str, auth: dict = Depends(get_auth)):   
     #Leer los documentos del directorio data
     data = SimpleDirectoryReader(os.path.join(os.path.dirname(__file__), "../data/")).load_data() 
 

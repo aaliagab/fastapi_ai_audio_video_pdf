@@ -10,8 +10,9 @@ from routes.access_routes import router as router_access
 from routes.user_access_routes import router as router_user_access
 from routes.auth_routes import router_auth
 from middleware import AuthMiddleware
-from utils import ensure_admin_access, ensure_admin_user
+from utils import ensure_admin_user
 from configurations.config import engine, Base, SessionLocal
+from starlette.requests import Request
 
 import uvicorn
 
@@ -31,6 +32,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def db_session_middleware(request: Request, call_next):
+    response = None
+    try:
+        request.state.db = SessionLocal()
+        response = await call_next(request)
+    finally:
+        request.state.db.close()
+    return response
+
+# Add authentication middleware
+app.add_middleware(AuthMiddleware)
+
 
 # Routes media and files
 app.include_router(router_transcription, prefix="/ai/transcriptions", tags=["transcriptions"])
@@ -47,14 +61,10 @@ app.include_router(router_user_access, prefix="/user_accesses", tags=["user_acce
 # Include authentication routes
 app.include_router(router_auth, prefix="/auth", tags=["auth"])
 
-# Add authentication middleware
-app.add_middleware(AuthMiddleware)
-
 # Create database tables (optional, use migrations in production)
 Base.metadata.create_all(bind=engine)
 
 with SessionLocal() as db:
-    ensure_admin_access(db)
     ensure_admin_user(db)
 
 if __name__ == "__main__":

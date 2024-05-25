@@ -1,22 +1,23 @@
 from starlette.middleware.base import BaseHTTPMiddleware
-from dao.access_dao import AccessDAO
-from fastapi import Request, HTTPException
+from fastapi import HTTPException
+from starlette.requests import Request
+import json
 
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        if request.url.path == "/docs" or request.url.path == "/openapi.json" or request.url.path == "/auth/authenticate":
+        if request.url.path in ["/docs", "/openapi.json", "/auth/authenticate"]:
             response = await call_next(request)
             return response
-        access_token = request.headers.get("Authorization")
-        if not access_token:
-            raise HTTPException(status_code=401, detail="Missing access token")
-
-        access_token = access_token.replace("Bearer ", "")
-        db = request.app.state.db
-        access = AccessDAO.get_access_by_id(db, access_token)
-        if not access:
-            raise HTTPException(status_code=403, detail="Invalid access token")
-
-        request.state.access = access
+        
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            raise HTTPException(status_code=401, detail="Missing Authorization header")
+        
+        try:
+            auth_data = json.loads(auth_header)
+            request.state.auth = auth_data
+        except json.JSONDecodeError:
+            raise HTTPException(status_code=401, detail="Invalid Authorization header format")
+        
         response = await call_next(request)
         return response

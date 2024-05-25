@@ -5,12 +5,11 @@ from dao.user_dao import UserDAO
 from models.user import User
 from models.user_access import UserAccess
 from dao.user_access_dao import UserAccessDAO
+from fastapi import HTTPException, Depends
+from starlette.requests import Request
+from fastapi.security.api_key import APIKeyHeader
 
-def ensure_admin_access(db: Session):
-    admin_access = AccessDAO.get_access_by_name(db, "admin")
-    if not admin_access:
-        admin_access = Access(access_name="admin")
-        AccessDAO.create_access(db, admin_access)
+api_key_header = APIKeyHeader(name='Authorization', auto_error=False)
 
 def ensure_admin_user(db: Session):
     admin_user = UserDAO.get_user_by_username(db, "admin")
@@ -23,5 +22,26 @@ def ensure_admin_user(db: Session):
     if not admin_access:
         admin_access = Access(access_name="admin")
         AccessDAO.create_access(db, admin_access)
-    user_access = UserAccess(user_id=admin_user.id, accesstoken_id=admin_access.accesstoken_id)
-    UserAccessDAO.create_user_access(db, user_access)
+    user_access = UserAccessDAO.get_user_access_by_id(db, admin_user.id, admin_access.accesstoken_id)
+    if not user_access:
+        user_access = UserAccess(user_id=admin_user.id, accesstoken_id=admin_access.accesstoken_id)
+        UserAccessDAO.create_user_access(db, user_access)
+
+def get_access_tokens(request: Request):
+    return request.state.access_tokens
+
+def has_access(request: Request):
+    access_tokens = getattr(request.state, 'access_tokens', None)
+    if not access_tokens:
+        raise HTTPException(status_code=403, detail="No access tokens found")
+    return access_tokens
+
+def get_auth(api_key: str = Depends(api_key_header)):
+    import json
+    if not api_key:
+        raise HTTPException(status_code=403, detail="No Authorization header found")
+    try:
+        auth = json.loads(api_key)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=403, detail="Invalid Authorization header format")
+    return auth

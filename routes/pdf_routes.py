@@ -1,7 +1,8 @@
 import os
-from fastapi import APIRouter, File, UploadFile
+from fastapi import APIRouter, File, UploadFile, Depends
 import shutil
 from PyPDF2 import PdfReader
+from utils import get_auth
 
 router_pdf = APIRouter()
 
@@ -35,7 +36,7 @@ def upload_file(file: UploadFile = File(...)):
     return file
 
 @router_pdf.post('/upload')
-def upload(pdf: UploadFile):
+def upload(pdf: UploadFile, auth: dict = Depends(get_auth)):
     try:
         temp_pdf_path = os.path.join(os.getcwd(), pdf.filename)
         upload_file(pdf)
