@@ -13,7 +13,7 @@ from dao.content_dao import ContentDAO
 nest_asyncio.apply()
 
 # Cámbiala por tu API de OpenAI
-os.environ["OPENAI_API_KEY"] = 'MY-API-KEY-FROM-OPENAI'
+#os.environ["OPENAI_API_KEY"] = 'MY-API-KEY-FROM-OPENAI'
 
 # Definir e instanciar el modelo
 modelo = OpenAI(temperature=0, model="gpt-3.5-turbo")
