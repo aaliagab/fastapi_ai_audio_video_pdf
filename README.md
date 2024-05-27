@@ -6,7 +6,8 @@ This is a REST API built with FastAPI. It follows a modular architecture with se
 1. Clone the repository of project, move to root path of environment and active it with line ".\name_environment\Scripts\activate". Then move to root path of project.
 2. Install the dependencies listed in `requirements.txt` with "pip install -r requirements.txt". This step can to take some minutes, depends on your internet speed.
 3. Install ffmpeg, for example see the video https://www.youtube.com/watch?v=0zN9oZ98ZgE to see how install it in windows.
-4. Run the `app.py` file to start the API. The first time can to take several minutes for donwload small and medium whisper models. The command for run is "uvicorn app:app --reload".
+4. Edit the `config.py` file to set the correct paths for the models and the database.
+5. Run the `app.py` file to start the API. The first time can to take several minutes for donwload small and medium whisper models. The command for run is "uvicorn app:app --reload".
 
 ## Usage
 
