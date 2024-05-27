@@ -18,23 +18,23 @@ model_whisper_small = whisper.load_model("small")
 #model_whisper_medium = whisper.load_model("medium")
 router_transcription = APIRouter()
 
-def check_and_create_file_path(accesstoken_id, type):
-    file_path = f"data/{accesstoken_id}_{type}.txt"
+#def check_and_create_file_path(accesstoken_id, type):
+#    file_path = f"data/{accesstoken_id}_{type}.txt"
+#
+#    # Check if the directory exists, create it if not
+#    directory = os.path.dirname(file_path)
+#    if not os.path.exists(directory):
+#        os.makedirs(directory)
+#    return file_path
 
-    # Check if the directory exists, create it if not
-    directory = os.path.dirname(file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    return file_path
-
-def check_and_create_file_path_forall(type):
-    file_path = f"data/for_all_users_{type}.txt"
-
-    # Check if the directory exists, create it if not
-    directory = os.path.dirname(file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    return file_path
+#def check_and_create_file_path_forall(type):
+#    file_path = f"data/for_all_users_{type}.txt"
+#
+#    # Check if the directory exists, create it if not
+#    directory = os.path.dirname(file_path)
+#    if not os.path.exists(directory):
+#        os.makedirs(directory)
+#    return file_path
 
 def upload_file(file: UploadFile = File(...)):
     with open(file.filename, "wb") as buffer:
@@ -92,22 +92,22 @@ def from_audio_openai_small(audio: UploadFile, source_id: str, accesstoken_id: s
     db_content = SQLAlchemyContent(**content.dict())
     response = ContentDAO.create_content(db, db_content)
 
-    file_path = check_and_create_file_path(accesstoken_id,"audio")
-    with open(file_path, "a") as file:
-        file.write(result)
+    #file_path = check_and_create_file_path(accesstoken_id,"audio")
+    #with open(file_path, "a") as file:
+    #    file.write(result)
     return response
 
-@router_transcription.post('/ai/allusers/from-audio-openai-small')
-def allusers_audio_openai_small(audio: UploadFile, auth: dict = Depends(get_auth)):    
-    if auth.get('auth').get('sources') == []:
-        raise HTTPException(status_code=404, detail="Source not found for this account") 
-    text = transcribe_audio(model_whisper_small, upload_file(audio))[0]['text_result']
-    result = f"AUDIO TITLE: {audio.filename}\nCONTENT: {text}\n\n"
-    
-    file_path = check_and_create_file_path_forall("audio")
-    with open(file_path, "a") as file:
-        file.write(result)
-    return result
+#@router_transcription.post('/ai/allusers/from-audio-openai-small')
+#def allusers_audio_openai_small(audio: UploadFile, auth: dict = Depends(get_auth)):    
+#    if auth.get('auth').get('sources') == []:
+#        raise HTTPException(status_code=404, detail="Source not found for this account") 
+#    text = transcribe_audio(model_whisper_small, upload_file(audio))[0]['text_result']
+#    result = f"AUDIO TITLE: {audio.filename}\nCONTENT: {text}\n\n"
+#    
+#    file_path = check_and_create_file_path_forall("audio")
+#    with open(file_path, "a") as file:
+#        file.write(result)
+#    return result
 
 #ZONE CREATE CONTENT VIDEO ENDPOINTS
 @router_transcription.post('/ai/content/from-video-openai-small')
@@ -122,19 +122,19 @@ def from_video_openai_small(video: UploadFile, source_id: str, accesstoken_id: s
     db_content = SQLAlchemyContent(**content.dict())
     response = ContentDAO.create_content(db, db_content)
 
-    file_path = check_and_create_file_path(accesstoken_id,"video")
-    with open(file_path, "a") as file:
-        file.write(result)
+    #file_path = check_and_create_file_path(accesstoken_id,"video")
+    #with open(file_path, "a") as file:
+    #    file.write(result)
     return response
 
-@router_transcription.post('/ai/allusers/from-video-openai-small')
-def allusers_video_openai_small(video: UploadFile, auth: dict = Depends(get_auth)):    
-    if auth.get('auth').get('sources') == []:
-        raise HTTPException(status_code=404, detail="Source not found for this account") 
-    text = transcribe_video(model_whisper_small, upload_file(video))[0]['text_result']
-    result = f"VIDEO TITLE: {video.filename}\nCONTENT: {text}\n\n"
-    
-    file_path = check_and_create_file_path_forall("video")
-    with open(file_path, "a") as file:
-        file.write(result)
-    return result
+#@router_transcription.post('/ai/allusers/from-video-openai-small')
+#def allusers_video_openai_small(video: UploadFile, auth: dict = Depends(get_auth)):    
+#    if auth.get('auth').get('sources') == []:
+#        raise HTTPException(status_code=404, detail="Source not found for this account") 
+#    text = transcribe_video(model_whisper_small, upload_file(video))[0]['text_result']
+#    result = f"VIDEO TITLE: {video.filename}\nCONTENT: {text}\n\n"
+#    
+#    file_path = check_and_create_file_path_forall("video")
+#    with open(file_path, "a") as file:
+#        file.write(result)
+#    return result

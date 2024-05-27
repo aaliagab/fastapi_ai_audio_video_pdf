@@ -11,14 +11,14 @@ from dto.content_dto import Content, ContentCreate, ContentUpdate
 
 router_pdf = APIRouter()
 
-def check_and_create_file_path(accesstoken_id):
-    file_path_pdf = f"data/{accesstoken_id}_pdf.txt"
-
-    # Check if the directory exists, create it if not
-    directory = os.path.dirname(file_path_pdf)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    return file_path_pdf
+#def check_and_create_file_path(accesstoken_id):
+#    file_path_pdf = f"data/{accesstoken_id}_pdf.txt"
+#
+#    # Check if the directory exists, create it if not
+#    directory = os.path.dirname(file_path_pdf)
+#    if not os.path.exists(directory):
+#        os.makedirs(directory)
+#    return file_path_pdf
 
 
 def get_list_pdf_text(pdf_docs):
@@ -58,9 +58,9 @@ def upload(pdf: UploadFile, source_id: str, accesstoken_id: str, db: Session = D
         db_content = SQLAlchemyContent(**content.dict())
         response = ContentDAO.create_content(db, db_content)
 
-        file_path_pdf = check_and_create_file_path(accesstoken_id)
-        with open(file_path_pdf, "a") as file:
-            file.write(result)
+        #file_path_pdf = check_and_create_file_path(accesstoken_id)
+        #with open(file_path_pdf, "a") as file:
+        #    file.write(result)
         return response
     except Exception as e:
         return {'error': str(e)}, 500
@@ -68,25 +68,25 @@ def upload(pdf: UploadFile, source_id: str, accesstoken_id: str, db: Session = D
         print("Deleting temp pdf file: {}".format(temp_pdf_path))
         os.remove(temp_pdf_path)
 
-@router_pdf.post('/upload')
-def upload(pdf: UploadFile, auth: dict = Depends(get_auth)):
-    if auth.get('auth').get('sources') == []:
-        raise HTTPException(status_code=404, detail="Source not found for this account")
-    try:
-        temp_pdf_path = os.path.join(os.getcwd(), pdf.filename)
-        upload_file(pdf)
-        text = get_pdf_text(temp_pdf_path)
-        result = f"PDF TITLE: {pdf.filename}\nCONTENT: {text}\n\n"
-        
-        file_path_pdf = check_and_create_file_path("for_all_users")
-        with open(file_path_pdf, "a") as file:
-            file.write(result)
-        return result
-    except Exception as e:
-        return {'error': str(e)}, 500
-    finally:
-        print("Deleting temp pdf file: {}".format(temp_pdf_path))
-        os.remove(temp_pdf_path)
+#@router_pdf.post('/upload')
+#def upload(pdf: UploadFile, auth: dict = Depends(get_auth)):
+#    if auth.get('auth').get('sources') == []:
+#        raise HTTPException(status_code=404, detail="Source not found for this account")
+#    try:
+#        temp_pdf_path = os.path.join(os.getcwd(), pdf.filename)
+#        upload_file(pdf)
+#        text = get_pdf_text(temp_pdf_path)
+#        result = f"PDF TITLE: {pdf.filename}\nCONTENT: {text}\n\n"
+#        
+#        file_path_pdf = check_and_create_file_path("for_all_users")
+#        with open(file_path_pdf, "a") as file:
+#            file.write(result)
+#        return result
+#    except Exception as e:
+#        return {'error': str(e)}, 500
+#    finally:
+#        print("Deleting temp pdf file: {}".format(temp_pdf_path))
+#        os.remove(temp_pdf_path)
 
 
 

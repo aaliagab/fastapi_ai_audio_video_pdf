@@ -13,7 +13,7 @@ class ContentDAO:
     
     @staticmethod
     def get_contents_by_user(db: Session, sources: list, access_tokens: list):
-        query = db.query(Content).filter(
+        query = db.query(Content).where(Content.status==1).filter(
             or_(
                 Content.source_id.in_(sources),
                 Content.access_id.in_(access_tokens)
