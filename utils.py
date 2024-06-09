@@ -32,7 +32,15 @@ def get_auth(api_key: str = Depends(api_key_header)):
     if not api_key:
         raise HTTPException(status_code=403, detail="No Authorization header found")
     try:
-        auth = json.loads(api_key)
-        return auth
+        token_data = api_key.split('#-%')
+        auth_data = {
+                "auth": {
+                "access_tokens": [token_data[0]],
+                "sources": [token_data[2]],
+                "user_id": token_data[1]
+                }
+            }
+        #auth = json.loads(auth_data)
+        return auth_data
     except json.JSONDecodeError:
         raise HTTPException(status_code=403, detail="Invalid Authorization header format")

@@ -13,7 +13,7 @@ from dao.content_dao import ContentDAO
 nest_asyncio.apply()
 
 # Cámbiala por tu API de OpenAI
-os.environ["OPENAI_API_KEY"] = 'sk-proj-XcBeEwtDJluaOdSgAqMMT3BlbkFJrxe3xpu3RMATMZrVPIba'
+os.environ["OPENAI_API_KEY"] = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 
 # Definir e instanciar el modelo
 modelo = OpenAI(temperature=0, model="gpt-3.5-turbo")
@@ -37,7 +37,7 @@ router_chat = APIRouter()
 #        result+=frase+"\n"
 #    return result
 
-@router_chat.post('/db/chat/query-question-from-chatgpt')
+@router_chat.get('/db/chat/query-question-from-chatgpt')
 def db_query_question_from_chatgpt(question: str, db: Session = Depends(get_db), auth: dict = Depends(get_auth)):
     user_data = auth.get('auth')
     sources = user_data.get('sources')
