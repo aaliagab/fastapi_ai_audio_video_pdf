@@ -25,5 +25,6 @@ def authenticate_user(request: Request, user_name: str, password: str, db: Sessi
             "sources": sources,
             "user_id": user.id,
             "user_name": user.user_name
-        }
+        },
+        "token":access_tokens[0]+'#-%'+user.id+'#-%'+sources[0]
     }

@@ -17,9 +17,9 @@ from starlette.requests import Request
 import uvicorn
 
 app = FastAPI(
-        title = "My FastAPI for AI Chat with audio and video",
-        description = "A REST API built with FastAPI for AI Chat with audio and video.",
-        version = "1.0.0",
+        title = "My FastAPI for AI Chat with PDF, AUDIO and VIDEO",
+        description = "A REST API built with FastAPI for AI Chat with PDF, AUDIO and VIDEO.",
+        version = "1.0.1",
     )
 
 

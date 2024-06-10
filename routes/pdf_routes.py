@@ -61,7 +61,7 @@ def upload(pdf: UploadFile, source_id: str, accesstoken_id: str, db: Session = D
         #file_path_pdf = check_and_create_file_path(accesstoken_id)
         #with open(file_path_pdf, "a") as file:
         #    file.write(result)
-        return response
+        return text
     except Exception as e:
         return {'error': str(e)}, 500
     finally:

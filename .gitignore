@@ -4,3 +4,5 @@ aienv/
 # Ignorar el directorio data
 data/
 
+**/__pycache__/
+
